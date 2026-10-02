@@ -1,0 +1,65 @@
+<app-header />
+<main class="shell page-main">
+  <div class="contact-layout">
+    <div class="contact-copy">
+      <p class="eyebrow">THERE’S ALWAYS ROOM AT THE TABLE</p>
+      <h1>Let’s <em>talk food.</em></h1>
+      <p>
+        A recipe you loved? A thought to share?<br />We’d love to hear about
+        your CookPedia experience.
+      </p>
+      <div class="contact-note">
+        <h3>From your kitchen to ours.</h3>
+        <p>
+          Your feedback helps us make CookPedia a more useful, inspiring place
+          to cook.
+        </p>
+      </div>
+    </div>
+    <section class="contact-form">
+      <h2>Leave a little note.</h2>
+      <form [formGroup]="testimonyForm" (ngSubmit)="addTestimony()">
+        <label for="contact-name">Your name</label
+        ><input
+          id="contact-name"
+          formControlName="name"
+          autocomplete="name"
+          placeholder="Your name"
+        /><label for="contact-email">Email address</label
+        ><input
+          id="contact-email"
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+        /><label for="contact-message">What’s on your mind?</label
+        ><textarea
+          id="contact-message"
+          formControlName="message"
+          rows="5"
+          placeholder="Tell us about your experience…"
+        ></textarea>
+        @if (testimonyForm.invalid && testimonyForm.touched) {
+          <p class="field-error">
+            Please fill in your name, a valid email, and a message of up to
+            3,000 characters.
+          </p>
+        }
+        <p class="small muted">
+          Approved feedback may appear on CookPedia with your name. Your email
+          stays private.
+        </p>
+        @if (error) {
+          <p class="inline-error" role="alert">{{ error }}</p>
+        }
+        @if (success) {
+          <p class="inline-success" role="status">{{ success }}</p>
+        }
+        <button class="button" type="submit" [disabled]="loading">
+          {{ loading ? "Sending…" : "Send your note" }} →
+        </button>
+      </form>
+    </section>
+  </div>
+</main>
+<app-footer />

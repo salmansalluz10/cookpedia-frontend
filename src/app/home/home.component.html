@@ -1,0 +1,224 @@
+<app-header />
+<main>
+  <section class="hero shell">
+    <div class="hero-copy">
+      <div class="eyebrow hero-eyebrow">
+        <span></span> A LITTLE INSPIRATION FOR YOUR EVERYDAY
+      </div>
+      <h1>Good food.<br />Great moments.<br /><em>Made by you.</em></h1>
+      <p>
+        From a quick weekday bite to a slow Sunday feast.<br
+          class="desktop-only"
+        />
+        Find your next favorite recipe and make it your own.
+      </p>
+      <div class="hero-actions">
+        <a class="button" routerLink="/recipes"
+          >Explore recipes <cp-icon name="arrow" /></a
+        ><a class="quiet-link" routerLink="/about">A little about us ↗</a>
+      </div>
+      <div class="hero-footnote">
+        <span class="mini-icon"><cp-icon name="leaf" /></span
+        ><span
+          >Fresh ideas. Real ingredients.
+          <strong>Endless possibilities.</strong></span
+        >
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-orbit"></div>
+      @if (allRecipes.length) {
+        <img
+          class="hero-food"
+          [src]="allRecipes[0].image"
+          [alt]="allRecipes[0].name"
+          fetchpriority="high"
+          (error)="imageError($event)"
+        /><a
+          class="hero-recipe-label"
+          [routerLink]="['/recipe', allRecipes[0]._id, 'view']"
+          ><span class="tiny-label">A LITTLE DINNER INSPIRATION</span
+          ><strong>{{ allRecipes[0].name }}</strong
+          ><span
+            ><cp-icon name="clock" />
+            {{
+              allRecipes[0].prepTimeMinutes + allRecipes[0].cookTimeMinutes
+            }}
+            min <span class="label-dot">·</span> {{ allRecipes[0].cuisine }}
+            <cp-icon name="arrow" /></span
+        ></a>
+      } @else {
+        <div class="hero-placeholder">
+          <cp-icon name="chef" /><span
+            >Your next delicious<br />idea starts here.</span
+          >
+        </div>
+      }
+      <div class="floating-note">
+        <cp-icon name="spark" /><span
+          >Made with a little<br /><strong>love & curiosity</strong></span
+        >
+      </div>
+      <span class="visual-caption">THE JOY IS IN THE MAKING</span>
+    </div>
+  </section>
+  <div class="discovery-wrap">
+    <div class="shell discovery-bar">
+      <span><cp-icon name="search" /> What are you craving?</span
+      ><input
+        [(ngModel)]="searchQuery"
+        aria-label="Search recipes"
+        placeholder="Try a dish, an ingredient, a little inspiration…"
+        (keydown.enter)="searchLink.click()"
+      /><a
+        #searchLink
+        class="button button-small"
+        routerLink="/recipes"
+        [queryParams]="{ q: searchQuery }"
+        >Find a recipe <cp-icon name="arrow"
+      /></a>
+    </div>
+  </div>
+  <section class="shell section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">FOLLOW YOUR APPETITE</p>
+        <h2>A world of flavor.</h2>
+      </div>
+      <a class="quiet-link" routerLink="/recipes"
+        >Explore all cuisines <cp-icon name="arrow"
+      /></a>
+    </div>
+    @if (loading) {
+      <div class="category-grid" aria-label="Loading cuisines">
+        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+          <div class="skeleton category-skeleton"></div>
+        }
+      </div>
+    } @else if (categories.length) {
+      <div class="category-grid">
+        @for (category of categories; track category.name) {
+          <a
+            class="category-card"
+            routerLink="/recipes"
+            [queryParams]="{ cuisine: category.name }"
+            ><img
+              [src]="category.image"
+              [alt]="category.name + ' cuisine'"
+              loading="lazy"
+              (error)="imageError($event)"
+            />
+            <h3>{{ category.name }}</h3>
+            <span
+              >{{ category.count }}
+              {{ category.count === 1 ? "recipe" : "recipes" }}</span
+            ></a
+          >
+        }
+      </div>
+    } @else {
+      <p class="muted">Cuisines will appear here when recipes are available.</p>
+    }
+  </section>
+  <section class="recipes-section">
+    <div class="shell section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">A FRESH DOSE OF INSPIRATION</p>
+          <h2>Something delicious awaits.</h2>
+          <p>Discover a new favorite from the CookPedia kitchen.</p>
+        </div>
+        <a class="button button-outline" routerLink="/recipes"
+          >View all recipes <cp-icon name="arrow"
+        /></a>
+      </div>
+      @if (loading) {
+        <div class="recipe-grid">
+          @for (item of [1, 2, 3]; track item) {
+            <div class="skeleton recipe-skeleton"></div>
+          }
+        </div>
+      } @else if (error) {
+        <div class="state-panel" role="alert">
+          <cp-icon name="chef" />
+          <h3>The kitchen is taking a moment.</h3>
+          <p>{{ error }}</p>
+          <button class="button" (click)="getRecipes()">Try again</button>
+        </div>
+      } @else {
+        <div class="recipe-grid">
+          @for (recipe of allRecipes; track recipe._id) {
+            <cp-recipe-card [recipe]="recipe" />
+          } @empty {
+            <div class="state-panel">
+              <h3>A new chapter is cooking.</h3>
+              <p>No recipes have been added yet. Come back soon.</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+  <section class="shell section">
+    <div class="kitchen-banner">
+      <div>
+        <p class="eyebrow">YOUR VERY OWN RECIPE BOOK</p>
+        <h2>Keep the recipes.<br /><em>Make the memories.</em></h2>
+        <p>
+          Save the dishes you love, download a recipe for later,<br />and make
+          every day a little more delicious.
+        </p>
+        <a class="button button-cream" routerLink="/saved-recipes"
+          >Start your collection <cp-icon name="bookmark"
+        /></a>
+      </div>
+      <div class="banner-art">
+        <cp-icon name="bookmark" /><span
+          >Good things<br />are worth keeping.</span
+        ><span class="art-line"></span>
+      </div>
+    </div>
+  </section>
+  @if (topRated.length) {
+    <section class="shell section top-rated-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">A FEW CROWD FAVORITES</p>
+          <h2>Highly rated. Happily made.</h2>
+          <p>Explore recipes with the highest ratings in our collection.</p>
+        </div>
+        <a class="quiet-link" routerLink="/recipes"
+          >Find your favorite <cp-icon name="arrow"
+        /></a>
+      </div>
+      <div class="recipe-grid">
+        @for (recipe of topRated; track recipe._id) {
+          <cp-recipe-card [recipe]="recipe" />
+        }
+      </div>
+    </section>
+  }
+  @if (allFeedback.length) {
+    <section class="shell section testimonials">
+      <p class="eyebrow">AROUND THE TABLE</p>
+      <h2>From one home cook to another.</h2>
+      <div class="recipe-grid">
+        @for (item of allFeedback; track item._id) {
+          <blockquote>
+            <span class="quote-mark">“</span>
+            <p>{{ item.message }}</p>
+            <footer>
+              <span class="avatar">{{ item.name.charAt(0) }}</span
+              >{{ item.name }}
+            </footer>
+          </blockquote>
+        }
+      </div>
+    </section>
+  } @else if (feedbackError) {
+    <p class="shell muted small">
+      Community feedback is temporarily unavailable.
+    </p>
+  }
+</main>
+<app-footer />

@@ -1,0 +1,16 @@
+<nav class="admin-nav" aria-label="Administration">
+  <a class="brand" routerLink="/">CookPedia<span class="brand-dot">.</span></a
+  ><span class="eyebrow">BEHIND THE KITCHEN DOOR</span
+  ><a routerLink="/admin"
+    ><i class="fa-solid fa-chart-simple me-2"></i>Overview</a
+  ><a routerLink="/admin/recipe-list"
+    ><i class="fa-solid fa-bowl-food me-2"></i>Recipes</a
+  ><a routerLink="/admin/user-list"
+    ><i class="fa-solid fa-users me-2"></i>Community</a
+  ><a routerLink="/admin/download-list"
+    ><i class="fa-solid fa-download me-2"></i>Downloads</a
+  ><a routerLink="/admin/request-list"
+    ><i class="fa-solid fa-message me-2"></i>Feedback</a
+  ><a class="admin-home" routerLink="/">← Back to CookPedia</a
+  ><button class="text-button" (click)="logout()">Sign out</button>
+</nav>

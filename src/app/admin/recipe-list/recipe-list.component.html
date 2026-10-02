@@ -1,0 +1,110 @@
+<div class="admin-shell">
+  <app-sidebar />
+  <main class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <p class="eyebrow">FROM YOUR KITCHEN</p>
+        <h1>The recipe collection.</h1>
+      </div>
+      <a class="button" routerLink="/admin/recipe/add">+ Add a recipe</a
+      ><input
+        [(ngModel)]="searchKey"
+        aria-label="Search recipes"
+        placeholder="Search recipe names…"
+      />
+    </div>
+    @if (loading) {
+      <div class="skeleton recipe-skeleton"></div>
+    } @else if (error) {
+      <div class="state-panel" role="alert">
+        <p>{{ error }}</p>
+        <button class="button" (click)="getAllRecipes()">Try again</button>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Recipe</th>
+              <th>Photo</th>
+              <th>Cuisine</th>
+              <th>Manage</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of allRecipes | search: searchKey; track item._id) {
+              <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ item.name }}</td>
+                <td>
+                  <img
+                    width="64"
+                    height="64"
+                    [src]="item.image"
+                    [alt]="item.name"
+                    (error)="$any($event.target).src = '/image-unavailable.svg'"
+                  />
+                </td>
+                <td>{{ item.cuisine }}</td>
+                <td>
+                  <a
+                    class="btn"
+                    [routerLink]="['/admin/recipe', item._id, 'edit']"
+                    [attr.aria-label]="'Edit ' + item.name"
+                    ><i class="fa-solid fa-pen"></i></a
+                  ><button
+                    class="btn danger-link"
+                    [disabled]="busy === item._id"
+                    [attr.aria-label]="'Delete ' + item.name"
+                    (click)="removeRecipe(item._id)"
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-5">
+                  Nothing to show here yet.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    @if (pendingDelete) {
+      <div class="dialog-backdrop">
+        <section
+          class="confirm-dialog"
+          cdkTrapFocus
+          [cdkTrapFocusAutoCapture]="true"
+          (keydown.escape)="cancelDelete()"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-title"
+        >
+          <h2 id="delete-title">Delete this recipe?</h2>
+          <p>This removes it from the recipe catalog.</p>
+          <div class="d-flex gap-3">
+            <button
+              class="button button-outline"
+              cdkFocusInitial
+              (click)="cancelDelete()"
+              [disabled]="!!busy"
+            >
+              Keep recipe</button
+            ><button
+              class="button"
+              (click)="confirmDelete()"
+              [disabled]="!!busy"
+            >
+              {{ busy ? "Deleting…" : "Delete recipe" }}
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+  </main>
+</div>

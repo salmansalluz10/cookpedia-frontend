@@ -1,0 +1,139 @@
+<app-header />
+<main class="shell page-main">
+  <a class="back-link" routerLink="/recipes">← Back to recipes</a>
+  @if (loading) {
+    <div class="skeleton detail-skeleton" aria-label="Loading recipe"></div>
+  } @else if (error) {
+    <div class="state-panel" role="alert">
+      <h1>We couldn’t open this recipe.</h1>
+      <p>{{ error }}</p>
+      <button class="button" (click)="getrecipeDetails(recipeId)">
+        Try again
+      </button>
+    </div>
+  } @else {
+    <div class="detail-hero">
+      <div class="detail-photo">
+        <img
+          [src]="recipe.image"
+          [alt]="recipe.name"
+          (error)="$any($event.target).src = '/image-unavailable.svg'"
+        /><span class="image-badge">{{ recipe.cuisine }}</span>
+      </div>
+      <div class="detail-intro">
+        <p class="eyebrow">FROM THE COOKPEDIA KITCHEN</p>
+        <h1>{{ recipe.name }}</h1>
+        <div class="detail-tags">
+          <span>{{ recipe.difficulty }}</span>
+          @for (meal of recipe.mealType; track meal) {
+            <span>{{ meal }}</span>
+          }
+        </div>
+        @if (recipe.rating) {
+          <p class="rating-line">
+            ★ {{ recipe.rating }}
+            @if (recipe.reviewCount) {
+              · {{ recipe.reviewCount }} ratings
+            }
+          </p>
+        }
+        <div class="detail-stats">
+          <div>
+            <cp-icon name="clock" /><strong
+              >{{ recipe.prepTimeMinutes }} <small>min</small></strong
+            ><span>Prep time</span>
+          </div>
+          <div>
+            <cp-icon name="chef" /><strong
+              >{{ recipe.cookTimeMinutes }} <small>min</small></strong
+            ><span>Cook time</span>
+          </div>
+          <div>
+            <cp-icon name="leaf" /><strong>{{
+              recipe.caloriesPerServing
+            }}</strong
+            ><span>kcal / serving</span>
+          </div>
+        </div>
+        <p class="servings-note">
+          Made for <strong>{{ recipe.servings }} servings</strong>. Better when
+          shared.
+        </p>
+        <div class="detail-actions">
+          <button
+            class="button"
+            (click)="saveRecipe()"
+            [disabled]="saving || saved"
+          >
+            <cp-icon [name]="saved ? 'check' : 'bookmark'" />{{
+              saved ? "Saved to collection" : saving ? "Saving…" : "Save recipe"
+            }}</button
+          ><button
+            class="button button-outline"
+            (click)="downloadRecipe()"
+            [disabled]="downloading"
+          >
+            <cp-icon name="download" />{{
+              downloading ? "Preparing…" : "Download PDF"
+            }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cooking-layout">
+      <section class="ingredient-panel">
+        <p class="eyebrow">LET’S GET READY</p>
+        <h2>The good stuff.</h2>
+        <p>Ingredients for {{ recipe.servings }} servings</p>
+        <ul class="ingredients">
+          @for (item of recipe.ingredients; track $index) {
+            <li>
+              <label
+                ><input type="checkbox" /><span>{{ item }}</span></label
+              >
+            </li>
+          }
+        </ul>
+      </section>
+      <section class="instructions-panel">
+        <p class="eyebrow">ONE STEP AT A TIME</p>
+        <h2>Make something delicious.</h2>
+        <ol class="instructions">
+          @for (item of recipe.instructions; track $index) {
+            <li>
+              <span class="step-number"
+                >{{ $index + 1 < 10 ? "0" : "" }}{{ $index + 1 }}</span
+              >
+              <p>{{ item }}</p>
+            </li>
+          }
+        </ol>
+        <div class="cooking-note">
+          <cp-icon name="heart" /> Made it? Enjoy every bite.
+        </div>
+      </section>
+    </div>
+    <section class="section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">KEEP EXPLORING</p>
+          <h2>A little more {{ recipe.cuisine }}.</h2>
+        </div>
+        <a routerLink="/recipes" class="quiet-link"
+          >All recipes <cp-icon name="arrow"
+        /></a>
+      </div>
+      <div class="recipe-grid">
+        @for (item of allRelatedRecipe; track item._id) {
+          <cp-recipe-card [recipe]="item" />
+        }
+      </div>
+      @if (relatedError) {
+        <p class="inline-error">{{ relatedError }}</p>
+      } @else if (!allRelatedRecipe.length) {
+        <p class="muted">More recipes from this cuisine are on their way.</p>
+      }
+    </section>
+  }
+</main>
+<app-footer />

@@ -1,0 +1,71 @@
+<app-header />
+<main class="auth-shell shell">
+  <div class="auth-story">
+    <div class="eyebrow">A SEAT AT OUR TABLE</div>
+    <h1>Welcome back<br />to your<br /><em>happy place.</em></h1>
+    <p>
+      Your saved favorites, your next kitchen adventure.<br />It all starts with
+      a little inspiration.
+    </p>
+    <cp-auth-art /><span class="auth-story-bottom"
+      >COOK. SHARE. COME BACK FOR SECONDS.</span
+    >
+  </div>
+  <section class="auth-form-panel">
+    <span class="eyebrow">YOUR KITCHEN AWAITS</span>
+    <h2>Lovely to see you.</h2>
+    <p>Sign in to your CookPedia account.</p>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+      <label for="email">Email address</label
+      ><input
+        id="email"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      @if (loginForm.get("email")?.invalid && loginForm.get("email")?.touched) {
+        <p class="field-error">Enter a valid email address.</p>
+      }
+      <label for="password">Password</label>
+      <div class="password-field">
+        <input
+          id="password"
+          formControlName="password"
+          [type]="showPassword ? 'text' : 'password'"
+          autocomplete="current-password"
+          placeholder="Your password"
+        /><button
+          type="button"
+          (click)="showPassword = !showPassword"
+          [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          [attr.aria-pressed]="showPassword"
+        >
+          <cp-icon name="eye" />
+        </button>
+      </div>
+      @if (
+        loginForm.get("password")?.invalid && loginForm.get("password")?.touched
+      ) {
+        <p class="field-error">Please enter your password.</p>
+      }
+      @if (error) {
+        <div class="inline-error" role="alert">{{ error }}</div>
+      }
+      <button class="button auth-submit" type="submit" [disabled]="loading">
+        {{ loading ? "Signing in…" : "Sign in" }}<cp-icon name="arrow" />
+      </button>
+    </form>
+    <p class="auth-switch">
+      New to the kitchen?
+      <a routerLink="/register" [queryParams]="{ returnUrl: returnUrl }"
+        >Create an account</a
+      >
+    </p>
+    <div class="auth-divider">
+      <span></span><cp-icon name="leaf" /><span></span>
+    </div>
+    <p class="auth-note">A world of recipes. A collection that’s yours.</p>
+  </section>
+</main>
+<app-footer />

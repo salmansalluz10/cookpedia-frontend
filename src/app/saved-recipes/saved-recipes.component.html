@@ -1,0 +1,53 @@
+<app-header />
+<main class="shell page-main">
+  <div class="page-heading">
+    <p class="eyebrow">TRIED, LOVED, AND KEPT CLOSE</p>
+    <h1>Your little <em>recipe book.</em></h1>
+    <p>Good things are worth coming back to.</p>
+  </div>
+  @if (loading) {
+    <div class="recipe-grid">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="skeleton recipe-skeleton"></div>
+      }
+    </div>
+  } @else if (error) {
+    <div class="state-panel" role="alert">
+      <p>{{ error }}</p>
+      <button class="button" (click)="getAllSavedRecipes()">Try again</button>
+    </div>
+  } @else {
+    <div class="recipe-grid">
+      @for (recipe of allrecipes; track recipe._id) {
+        <div>
+          <cp-recipe-card
+            [recipe]="{
+              name: recipe.name,
+              image: recipe.image,
+              recipeId: recipe.recipeId,
+            }"
+          /><button
+            class="text-button remove-saved"
+            [disabled]="removing === recipe._id"
+            (click)="removeRecipe(recipe._id)"
+          >
+            <cp-icon name="trash" />
+            {{
+              removing === recipe._id ? "Removing…" : "Remove from collection"
+            }}
+          </button>
+        </div>
+      } @empty {
+        <div class="state-panel">
+          <cp-icon name="bookmark" />
+          <h2>A collection waiting to happen.</h2>
+          <p>Save a recipe that catches your eye. You’ll find it here.</p>
+          <a class="button" routerLink="/recipes"
+            >Find your first favorite <cp-icon name="arrow"
+          /></a>
+        </div>
+      }
+    </div>
+  }
+</main>
+<app-footer />

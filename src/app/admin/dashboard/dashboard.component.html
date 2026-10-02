@@ -1,0 +1,61 @@
+<div class="admin-shell">
+  <app-sidebar />
+  <main class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <p class="eyebrow">THE BIG PICTURE</p>
+        <h1>A look inside the kitchen.</h1>
+      </div>
+      <a routerLink="/admin/recipe/add" class="button">+ Add a recipe</a>
+    </div>
+    @if (loading) {
+      <div
+        class="skeleton recipe-skeleton"
+        aria-label="Loading dashboard"
+      ></div>
+    } @else if (error) {
+      <div class="state-panel">
+        <p>{{ error }}</p>
+        <button class="button" (click)="load()">Try again</button>
+      </div>
+    } @else {
+      <div class="admin-stats">
+        <a routerLink="/admin/user-list" class="stat-card"
+          ><i class="fa-solid fa-users"></i><strong>{{ userCount }}</strong
+          ><span>Community members</span></a
+        ><a routerLink="/admin/recipe-list" class="stat-card"
+          ><i class="fa-solid fa-bowl-food"></i
+          ><strong>{{ recipeCount }}</strong
+          ><span>Recipes in the kitchen</span></a
+        ><a routerLink="/admin/download-list" class="stat-card"
+          ><i class="fa-solid fa-download"></i
+          ><strong>{{ downloadCount }}</strong
+          ><span>Recipe downloads</span></a
+        ><a routerLink="/admin/request-list" class="stat-card"
+          ><i class="fa-solid fa-message"></i><strong>{{ requestCount }}</strong
+          ><span>Feedback awaiting review</span></a
+        >
+      </div>
+      <div class="admin-widgets">
+        <div>
+          <p class="eyebrow">WHAT’S COOKING</p>
+          <h2>Downloads by cuisine</h2>
+          @if (downloadCount) {
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartOptions"
+              style="width: 100%; height: 350px; display: block"
+            />
+          } @else {
+            <p class="muted">The first recipe download will appear here.</p>
+          }
+        </div>
+        <div>
+          <p class="eyebrow">A LITTLE PLANNING</p>
+          <h2>Kitchen calendar</h2>
+          <mat-calendar [(selected)]="selected" />
+        </div>
+      </div>
+    }
+  </main>
+</div>

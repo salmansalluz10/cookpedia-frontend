@@ -1,0 +1,68 @@
+<div class="admin-shell">
+  <app-sidebar />
+  <main class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <p class="eyebrow">COMMUNITY FEEDBACK</p>
+        <h1>Notes from the kitchen.</h1>
+      </div>
+    </div>
+    @if (loading) {
+      <div class="skeleton recipe-skeleton"></div>
+    } @else if (error) {
+      <div class="state-panel" role="alert">
+        <p>{{ error }}</p>
+        <button class="button" (click)="getAllFeedback()">Try again</button>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Message</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of allFeedback; track item._id) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.message }}</td>
+                <td>
+                  @if (item.status === "Pending") {
+                    <div class="d-flex gap-2">
+                      <button
+                        class="btn btn-success"
+                        [disabled]="busy === item._id"
+                        (click)="updateFeedbakcStatus(item._id, 'Approved')"
+                      >
+                        Approve</button
+                      ><button
+                        class="btn btn-outline-danger"
+                        [disabled]="busy === item._id"
+                        (click)="updateFeedbakcStatus(item._id, 'Rejected')"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  } @else {
+                    <span class="status-chip">{{ item.status }}</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="text-center py-5">
+                  Nothing to show here yet.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+</div>

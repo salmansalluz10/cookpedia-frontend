@@ -1,0 +1,74 @@
+<app-header />
+<main class="shell page-main">
+  <div class="page-heading">
+    <p class="eyebrow">YOUR CORNER OF THE KITCHEN</p>
+    <h1>
+      Hello, <em>{{ auth.user()?.username }}.</em>
+    </h1>
+    <p>A little space for your cooking adventures.</p>
+  </div>
+  <section class="profile-panel">
+    <div class="profile-avatar">
+      @if (profileImg) {
+        <img [src]="profileImg" alt="Your profile picture" />
+      } @else {
+        <cp-icon name="user" />
+      }
+    </div>
+    <div>
+      <h2>Your profile</h2>
+      <p>{{ auth.user()?.email }}</p>
+      <label class="upload-label"
+        >Choose a profile photo<input
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          (change)="getFile($event)" /></label
+      ><small>PNG, JPEG, or WebP · Up to 3 MB</small>
+    </div>
+    <button class="button" (click)="updateProfile()" [disabled]="saving">
+      {{ saving ? "Saving…" : "Save changes" }} <cp-icon name="check" />
+    </button>
+  </section>
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">READY WHEN YOU ARE</p>
+        <h2>Your downloaded recipes.</h2>
+      </div>
+      <a routerLink="/saved-recipes" class="quiet-link"
+        >Saved collection <cp-icon name="arrow"
+      /></a>
+    </div>
+    @if (loading) {
+      <div class="skeleton recipe-skeleton"></div>
+    } @else if (error) {
+      <div class="state-panel">
+        <p>{{ error }}</p>
+        <button class="button" (click)="getUserDownloads()">Try again</button>
+      </div>
+    } @else {
+      <div class="recipe-grid">
+        @for (recipe of userDownloads; track recipe._id) {
+          <cp-recipe-card
+            [recipe]="{
+              recipeId: recipe.recipeId,
+              recipeName: recipe.recipeName,
+              recipeImage: recipe.recipeImage,
+              recipeCuisine: recipe.recipeCuisine,
+            }"
+          />
+        } @empty {
+          <div class="state-panel">
+            <cp-icon name="download" />
+            <h3>Your offline inspiration starts here.</h3>
+            <p>Download a recipe PDF from its detail page and keep it close.</p>
+            <a class="button button-outline" routerLink="/recipes"
+              >Explore recipes</a
+            >
+          </div>
+        }
+      </div>
+    }
+  </section>
+</main>
+<app-footer />

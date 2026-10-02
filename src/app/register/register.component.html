@@ -1,0 +1,89 @@
+<app-header />
+<main class="auth-shell shell">
+  <div class="auth-story">
+    <div class="eyebrow">A SEAT AT OUR TABLE</div>
+    <h1>
+      A little inspiration.<br />A whole lot of<br /><em>possibility.</em>
+    </h1>
+    <p>
+      Discover new flavors, keep your favorite recipes,<br />and find a little
+      joy in the everyday.
+    </p>
+    <cp-auth-art /><span class="auth-story-bottom"
+      >COOK. SHARE. COME BACK FOR SECONDS.</span
+    >
+  </div>
+  <section class="auth-form-panel">
+    <span class="eyebrow">LET’S MAKE SOMETHING GOOD</span>
+    <h2>Join the table.</h2>
+    <p>Create your free CookPedia account.</p>
+    <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
+      <label for="username">Your name</label
+      ><input
+        id="username"
+        formControlName="username"
+        autocomplete="name"
+        placeholder="What should we call you?"
+      />
+      @if (
+        registerForm.get("username")?.invalid &&
+        registerForm.get("username")?.touched
+      ) {
+        <p class="field-error">Please enter your name (up to 80 characters).</p>
+      }
+      <label for="email">Email address</label
+      ><input
+        id="email"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      @if (
+        registerForm.get("email")?.invalid && registerForm.get("email")?.touched
+      ) {
+        <p class="field-error">Enter a valid email address.</p>
+      }
+      <label for="password">Password</label>
+      <div class="password-field">
+        <input
+          id="password"
+          formControlName="password"
+          [type]="showPassword ? 'text' : 'password'"
+          autocomplete="new-password"
+          placeholder="At least 8 characters"
+        /><button
+          type="button"
+          (click)="showPassword = !showPassword"
+          [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          [attr.aria-pressed]="showPassword"
+        >
+          <cp-icon name="eye" />
+        </button>
+      </div>
+      @if (
+        registerForm.get("password")?.invalid &&
+        registerForm.get("password")?.touched
+      ) {
+        <p class="field-error">
+          Use 8–72 characters. Symbols and spaces are welcome.
+        </p>
+      }
+      @if (error) {
+        <div class="inline-error" role="alert">{{ error }}</div>
+      }
+      <button class="button auth-submit" type="submit" [disabled]="loading">
+        {{ loading ? "Creating your account…" : "Create account"
+        }}<cp-icon name="arrow" />
+      </button>
+    </form>
+    <p class="auth-switch">
+      Already at our table? <a routerLink="/login">Sign in</a>
+    </p>
+    <div class="auth-divider">
+      <span></span><cp-icon name="leaf" /><span></span>
+    </div>
+    <p class="auth-note">A world of recipes. A collection that’s yours.</p>
+  </section>
+</main>
+<app-footer />

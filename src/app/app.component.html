@@ -1,0 +1,17 @@
+<router-outlet></router-outlet>
+@if (notice.message()) {
+  <div
+    class="toast-note"
+    [class.toast-error]="notice.kind() === 'error'"
+    role="status"
+  >
+    <span>{{ notice.message() }}</span
+    ><button
+      type="button"
+      aria-label="Dismiss notification"
+      (click)="notice.message.set('')"
+    >
+      ×
+    </button>
+  </div>
+}

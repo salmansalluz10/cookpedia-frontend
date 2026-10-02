@@ -1,0 +1,112 @@
+<app-header />
+<main class="shell page-main">
+  <div class="page-heading">
+    <p class="eyebrow">YOUR NEXT FAVORITE STARTS HERE</p>
+    <h1>Find your <em>delicious.</em></h1>
+    <p>A little inspiration for whatever you’re craving.</p>
+  </div>
+  <div class="catalog-search">
+    <cp-icon name="search" /><input
+      aria-label="Search recipes or ingredients"
+      [(ngModel)]="searchKey"
+      (ngModelChange)="p = 1"
+      placeholder="Search recipes or ingredients…"
+    />
+    @if (searchKey) {
+      <button
+        class="icon-button"
+        aria-label="Clear search"
+        (click)="searchKey = ''; p = 1"
+      >
+        <cp-icon name="close" />
+      </button>
+    }
+  </div>
+  <div class="catalog-layout">
+    <aside class="filters">
+      <div class="filter-heading">
+        <h2><cp-icon name="filter" /> Refine your search</h2>
+        <button class="text-button" (click)="clear()">Reset</button>
+      </div>
+      <label for="cuisine-filter">Cuisine</label
+      ><select
+        id="cuisine-filter"
+        [(ngModel)]="cuisine"
+        (ngModelChange)="p = 1"
+      >
+        <option value="">All cuisines</option>
+        @for (item of cusineArray; track item) {
+          <option [value]="item">{{ item }}</option>
+        }</select
+      ><label for="meal-filter">Meal type</label
+      ><select id="meal-filter" [(ngModel)]="meal" (ngModelChange)="p = 1">
+        <option value="">Any time of day</option>
+        @for (item of mealTypeArray; track item) {
+          <option [value]="item">{{ item }}</option>
+        }
+      </select>
+      <div class="filter-tip">
+        <cp-icon name="leaf" />
+        <h3>Follow your curiosity.</h3>
+        <p>A new cuisine could be your next comfort food.</p>
+      </div>
+    </aside>
+    <section>
+      <div class="results-toolbar">
+        <span>{{ filteredRecipes.length }} recipes to explore</span
+        ><label
+          >Sort by
+          <select
+            [(ngModel)]="sort"
+            (ngModelChange)="p = 1"
+            aria-label="Sort recipes"
+          >
+            <option value="original">Collection order</option>
+            <option value="time">Quickest first</option>
+            <option value="name">Name A–Z</option>
+          </select></label
+        >
+      </div>
+      @if (loading) {
+        <div class="recipe-grid catalog-grid" aria-label="Loading recipes">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <div class="skeleton recipe-skeleton"></div>
+          }
+        </div>
+      } @else if (error) {
+        <div class="state-panel" role="alert">
+          <h3>We couldn’t load the recipes.</h3>
+          <p>{{ error }}</p>
+          <button class="button" (click)="getRecipes()">Try again</button>
+        </div>
+      } @else {
+        <div class="recipe-grid catalog-grid">
+          @for (
+            recipe of filteredRecipes
+              | paginate: { itemsPerPage: 12, currentPage: p };
+            track recipe._id
+          ) {
+            <cp-recipe-card [recipe]="recipe" />
+          } @empty {
+            <div class="state-panel">
+              <cp-icon name="search" />
+              <h3>No recipes on this menu.</h3>
+              <p>Try another search or clear a filter to discover more.</p>
+              <button class="button button-outline" (click)="clear()">
+                Clear filters
+              </button>
+            </div>
+          }
+        </div>
+        @if (filteredRecipes.length > 12) {
+          <pagination-controls
+            (pageChange)="p = $event"
+            previousLabel="Previous"
+            nextLabel="Next"
+          />
+        }
+      }
+    </section>
+  </div>
+</main>
+<app-footer />

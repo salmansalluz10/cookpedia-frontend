@@ -1,0 +1,52 @@
+<header class="site-header">
+  <nav class="shell navigation" aria-label="Main navigation">
+    <a class="brand" routerLink="/"
+      ><span class="brand-mark"><cp-icon name="chef" /></span>Cook<span
+        >Pedia</span
+      ><span class="brand-dot">.</span></a
+    >
+    <button
+      class="icon-button mobile-toggle"
+      type="button"
+      (click)="menuOpen = !menuOpen"
+      [attr.aria-expanded]="menuOpen"
+      aria-controls="main-menu"
+      aria-label="Toggle navigation"
+    >
+      <cp-icon [name]="menuOpen ? 'close' : 'menu'" />
+    </button>
+    <div id="main-menu" class="nav-menu" [class.is-open]="menuOpen">
+      <div class="nav-links">
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Discover</a
+        ><a routerLink="/recipes" routerLinkActive="active">Recipes</a
+        ><a routerLink="/about" routerLinkActive="active">Our story</a
+        ><a routerLink="/contact" routerLinkActive="active">Get in touch</a>
+      </div>
+      <div class="nav-actions">
+        @if (auth.signedIn) {
+          <a
+            class="icon-button"
+            routerLink="/saved-recipes"
+            aria-label="Saved recipes"
+            ><cp-icon name="bookmark" /></a
+          ><a class="account-link" routerLink="/profile"
+            ><cp-icon name="user" /> {{ auth.user()?.username }}</a
+          >
+          @if (auth.admin) {
+            <a routerLink="/admin">Admin</a>
+          }
+          <button class="text-button" (click)="logout()">Sign out</button>
+        } @else {
+          <a routerLink="/login" class="login-link">Sign in</a
+          ><a routerLink="/register" class="button button-small"
+            >Join the table <cp-icon name="arrow"
+          /></a>
+        }
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,240 @@
+<div class="admin-shell">
+  <app-sidebar />
+  <main class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <p class="eyebrow">A LITTLE KITCHEN CREATIVITY</p>
+        <h1>
+          {{ id ? "Refine your recipe." : "Put something new on the menu." }}
+        </h1>
+      </div>
+      <a class="quiet-link" routerLink="/admin/recipe-list"
+        >← Recipe collection</a
+      >
+    </div>
+    @if (loading) {
+      <div class="skeleton detail-skeleton"></div>
+    } @else if (error) {
+      <div class="state-panel">
+        <p>{{ error }}</p>
+        <button class="button" (click)="getRecipes()">Try again</button>
+      </div>
+    } @else {
+      <form class="admin-editor" (ngSubmit)="saveRecipe()">
+        @if (recipeDetails.image) {
+          <img
+            class="editor-preview"
+            [src]="recipeDetails.image"
+            alt="Recipe image preview"
+            (error)="$any($event.target).src = '/image-unavailable.svg'"
+          />
+        }
+        <div class="editor-grid">
+          <div>
+            <label for="recipe-name">Recipe name</label
+            ><input
+              id="recipe-name"
+              name="name"
+              [(ngModel)]="recipeDetails.name"
+              type="text"
+              placeholder="A name that makes you hungry"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-image">Image URL</label
+            ><input
+              id="recipe-image"
+              name="image"
+              [(ngModel)]="recipeDetails.image"
+              type="url"
+              placeholder="https://…"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-prepTimeMinutes">Prep time (minutes)</label
+            ><input
+              id="recipe-prepTimeMinutes"
+              name="prepTimeMinutes"
+              [(ngModel)]="recipeDetails.prepTimeMinutes"
+              type="number"
+              placeholder="0"
+              min="0"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-cookTimeMinutes">Cook time (minutes)</label
+            ><input
+              id="recipe-cookTimeMinutes"
+              name="cookTimeMinutes"
+              [(ngModel)]="recipeDetails.cookTimeMinutes"
+              type="number"
+              placeholder="0"
+              min="0"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-servings">Servings</label
+            ><input
+              id="recipe-servings"
+              name="servings"
+              [(ngModel)]="recipeDetails.servings"
+              type="number"
+              placeholder="1"
+              min="1"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-caloriesPerServing">Calories per serving</label
+            ><input
+              id="recipe-caloriesPerServing"
+              name="caloriesPerServing"
+              [(ngModel)]="recipeDetails.caloriesPerServing"
+              type="number"
+              placeholder="0"
+              min="0"
+              required
+            />
+          </div>
+          <div>
+            <label for="recipe-cuisine">Cuisine</label
+            ><input
+              id="recipe-cuisine"
+              name="cuisine"
+              [(ngModel)]="recipeDetails.cuisine"
+              list="existing-cuisines"
+              placeholder="Choose or enter a cuisine"
+              required
+            /><datalist id="existing-cuisines">
+              @for (cuisine of cusineArray; track cuisine) {
+                <option [value]="cuisine"></option>
+              }
+            </datalist>
+          </div>
+          <div>
+            <label for="recipe-difficulty">Difficulty</label
+            ><select
+              id="recipe-difficulty"
+              name="difficulty"
+              [(ngModel)]="recipeDetails.difficulty"
+              required
+            >
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="editor-grid">
+          <section>
+            <h2>Ingredients</h2>
+            @for (item of ingredients; track $index) {
+              <div class="editor-list-row">
+                <input
+                  [(ngModel)]="ingredients[$index]"
+                  [name]="'ingredient-' + $index"
+                  [attr.aria-label]="'Ingredient ' + ($index + 1)"
+                /><button
+                  type="button"
+                  class="btn danger-link"
+                  (click)="removeIngredient($index)"
+                  aria-label="Remove ingredient"
+                >
+                  ×
+                </button>
+              </div>
+            }
+            <div class="editor-add">
+              <textarea
+                #ingredient
+                aria-label="New ingredient"
+                placeholder="e.g. 2 tbsp olive oil"
+                rows="2"
+              ></textarea
+              ><button
+                type="button"
+                class="button button-small"
+                (click)="addIngredients(ingredient)"
+                aria-label="Add ingredient"
+              >
+                +
+              </button>
+            </div>
+          </section>
+          <section>
+            <h2>Instructions</h2>
+            @for (item of instructions; track $index) {
+              <div class="editor-list-row">
+                <textarea
+                  [(ngModel)]="instructions[$index]"
+                  [name]="'instruction-' + $index"
+                  [attr.aria-label]="'Instruction ' + ($index + 1)"
+                  rows="2"
+                ></textarea
+                ><button
+                  type="button"
+                  class="btn danger-link"
+                  (click)="removeInstructions($index)"
+                  aria-label="Remove instruction"
+                >
+                  ×
+                </button>
+              </div>
+            }
+            <div class="editor-add">
+              <textarea
+                #instruction
+                aria-label="New instruction"
+                placeholder="Add the next step…"
+                rows="2"
+              ></textarea
+              ><button
+                type="button"
+                class="button button-small"
+                (click)="addInstructions(instruction)"
+                aria-label="Add instruction"
+              >
+                +
+              </button>
+            </div>
+          </section>
+        </div>
+        <h2>When’s it on the menu?</h2>
+        <div class="meal-options">
+          @for (meal of mealTypeArray; track meal) {
+            <label
+              ><input
+                type="checkbox"
+                [checked]="mealArray.includes(meal)"
+                (change)="toggleMeal(meal)"
+              />{{ meal }}</label
+            >
+          }
+        </div>
+        <div class="editor-add">
+          <input
+            #newMeal
+            aria-label="New meal type"
+            placeholder="Add a meal type"
+          /><button
+            type="button"
+            class="button button-outline"
+            (click)="addMeal(newMeal)"
+          >
+            Add
+          </button>
+        </div>
+        @if (formError) {
+          <p class="inline-error" role="alert">{{ formError }}</p>
+        }
+        <button class="button mt-4" type="submit" [disabled]="saving">
+          {{ saving ? "Saving…" : id ? "Save recipe changes" : "Add recipe" }} →
+        </button>
+      </form>
+    }
+  </main>
+</div>
